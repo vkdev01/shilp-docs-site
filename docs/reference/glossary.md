@@ -1,43 +1,49 @@
 # Glossary
 
-Short definitions, in the order they matter for serving. Each one links to the chapter note that develops it.
+Terms as the repository uses them. Each entry points at the file or notebook where the term becomes concrete.
 
-**Arithmetic intensity** — FLOPs performed per byte read from memory. High intensity is compute-bound (prefill); low intensity is bandwidth-bound (decode). The single most predictive idea in the book. → [05](../companion/05-challenges.md)
+**AWQ / GPTQ / FP8** — quantisation formats. In this repository they appear as model ids: `Qwen/Qwen3-14B-AWQ`, `Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4`, `RedHatAI/Qwen2.5-7B-Instruct-FP8-dynamic`. → [06](../chapters/06-essential.md)
 
-**Autoregressive generation** — producing one token at a time, each conditioned on all previous tokens. Why serving is a loop, not a single pass. → [02](../companion/02-serving.md)
+**Batch size** — how many sequences a manager admits at once. `WorkloadManager.batch_size = 4` in the single-model service. → [single-model](../walkthroughs/single-model-service.md)
 
-**Continuous batching** — letting sequences join and leave a running batch at each decode step, instead of waiting for a whole batch to finish. The largest gap in shilp. → [06](../companion/06-essential.md)
+**`benchmark_serving.py`** — vLLM's own benchmark script, used by chapter 6. Chapter 9 uses the `vllm bench serve` subcommand instead. → [benchmark method](../walkthroughs/benchmark-method.md)
 
-**Chunked prefill** — splitting a long prompt's prefill across several steps so it interleaves with ongoing decode. The cheap approximation of disaggregation. → [06](../companion/06-essential.md)
+**Burstiness** — a benchmark flag (`--burstiness 1.0`) controlling how evenly requests are spaced. At 1.0 the arrival pattern is Poisson.
 
-**Decode** — the generation phase, one token per step. Bandwidth-bound: cost scales with model size, not with batch size. → [02](../companion/02-serving.md)
+**DLC** — AWS Deep Learning Containers, the basis of the `ch04/dlc*` examples.
 
-**Disaggregation (prefill–decode)** — running prefill and decode on separate pools, because they have different bottlenecks. Costs a KV transfer. → [07](../companion/07-advanced.md)
+**DJL** — Deep Java Library, the AWS inference container used to run vLLM in `ch04/dlc/`.
 
-**GGUF** — llama.cpp's single-file quantised model format. shilp's default engine consumes it; `modify/convert.py` produces it from safetensors.
+**Explicit model control** — Triton's `--model-control-mode=explicit`, where models load on request rather than at boot. The Triton equivalent of an LRU cache. → [multi-model](../walkthroughs/multi-model-service.md)
 
-**KV cache** — the stored keys and values for every token already processed, so each new step computes one row instead of the whole prefix. Sized by layers, heads, head dimension, context and concurrency. → [05](../companion/05-challenges.md)
+**GGUF** — the quantised single-file model format consumed by llama.cpp in `ch08/llamaCpp.ipynb`.
 
-**Manifest** — shilp's name for a model's descriptor: name, tag, layers by digest, params, template. OCI-shaped, content-addressed. → [What shilp is](../start/what-shilp-is.md)
+**KV cache** — stored keys and values for tokens already processed. Present in vLLM's engine, absent from the single-model service's streaming path (`use_cache=False`). → [02](../chapters/02-serving.md)
 
-**PagedAttention** — vLLM's technique of storing the KV cache in fixed-size pages so it need not be contiguous, removing fragmentation. → [08](../companion/08-frameworks.md)
+**LMCache** — an external KV cache store used in `ch07/LMCache.ipynb` so cached blocks survive the process. → [07](../chapters/07-advanced.md)
 
-**Prefill** — the phase that processes the whole prompt to produce the first token. Compute-bound; dominates time-to-first-token. → [02](../companion/02-serving.md)
+**LRU eviction** — least-recently-used eviction, implemented with `OrderedDict.popitem(last=False)` in `app/manager.py`.
 
-**Prefix caching** — reusing the KV cache of a shared prompt prefix. llama.cpp does it per process; RadixAttention generalises it to many tenants. → [06](../companion/06-essential.md)
+**ModelExecutor** — the class in the single-model service that owns the worker process and its two `mp.Queue` objects.
 
-**Quantisation** — reducing the bits per weight (fp16 → Q4_K_M). Attacks the bandwidth term directly: 3.3× less memory and roughly 3.3× more decode throughput. → [06](../companion/06-essential.md)
+**ModelWorker** — in `ch03/single_model_llm_serving/` it is the process that runs forward passes; in `ch03/multi_model_serving/` it is an ABC with three framework-specific subclasses. Same name, different roles.
 
-**RadixAttention** — prefix reuse via a radix tree over token sequences, so divergent continuations share their common ancestor. SGLang's core idea. → [08](../companion/08-frameworks.md)
+**Prefix repetition** — a synthetic workload where prompts share a long prefix, generated in chapter 9 with `--prefix-repetition-prefix-len` and friends.
 
-**Recipe** — shilp's record of how a model was reshaped: a list of steps, each with its parameters. → [Roadmap](../gaps/roadmap.md)
+**Prefill / decode** — the two phases of generation. Prefill processes the prompt (compute-bound); decode produces one token at a time (bandwidth-bound). → [02](../chapters/02-serving.md)
 
-**Shilpfile** — shilp's model-definition format: `FROM`, `PARAMETER`, `TEMPLATE`, `SYSTEM`.
+**Sequence** — the object in `workload_manager.py` holding a request's id, prompt, output, token count and, for streaming, the client queue.
 
-**Speculative decoding** — a small draft model proposes tokens, the large model verifies them in one pass. Lossless in output, faster when acceptance is high, costs a second model's memory. → [07](../companion/07-advanced.md)
+**`Sequence.prompt += token`** — the line in `update_sequence_output` that grows the prompt by one token per step, making the recompute-per-step behaviour explicit.
 
-**TTFT (time to first token)** — how long until the first chunk arrives; dominated by prefill plus queueing. → [Numbers](../start/numbers-that-matter.md)
+**Spec-Bench** — the benchmark cloned by `ch07/SpecDecode.ipynb`, run at concurrency 1 because speculation is a latency technique.
 
-**Tensor parallel** — splitting each layer's matrices across GPUs with an all-reduce per layer. Needs fast interconnect. → [07](../companion/07-advanced.md)
+**Tensor parallelism** — splitting each layer across GPUs with an all-reduce per layer; `--tensor-parallel-size`. Whether it helps depends on interconnect, as chapter 9's `g6e` versus `p4d` results show.
 
-**Workload manager** — the component that separates "what the client asked for" from "what the GPU should run next". The structure that makes batching possible. → [03](../companion/03-system-design.md)
+**TPOT** — time per output token, the decode-phase counterpart to TTFT.
+
+**TTFT** — time to first token, dominated by prefill plus queueing.
+
+**TritonWorker** — the worker in `app/worker.py` that calls a Triton server over HTTP instead of running a model locally.
+
+**`vllm serve`** — the command that starts vLLM's OpenAI-compatible server; every benchmark notebook starts it in the background and kills it afterwards.
