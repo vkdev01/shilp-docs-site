@@ -1,0 +1,1 @@
+| 2 | Colab, GPU runtime | `ch2_Inside_the_Mind_of_a_Transformer` needs a GPU for the attention visualisations; the rest is lighter |
