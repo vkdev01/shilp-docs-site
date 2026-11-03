@@ -1,57 +1,53 @@
 <div class="sh-hero" markdown>
-<span class="sh-kicker">companion notes · shilp</span>
+<span class="sh-kicker">companion notes · repository</span>
 
-# Reading the inference stack
+# Hands-On LLM Serving and Optimization
 {: .sh-title }
 
-A chapter-by-chapter reading companion to *Hands-On LLM Serving and Optimization*, mapped onto [shilp](https://github.com/vkdev01/shilp) — a from-scratch model-serving stack that pulls from the Hugging Face Hub, reshapes a model, and serves it over the Ollama and OpenAI APIs with its own code doing the serving.
+Notes on the book's companion repository — [orca3/llm-model-inference](https://github.com/orca3/llm-model-inference): five chapter notebooks on how an LLM actually runs, two complete serving services in chapter 3, three framework labs, and a seven-phase optimisation study on Qwen3-14B.
 {: .sh-lede }
 </div>
 
-The book explains how LLM serving works at scale: KV caches, prefill and decode, batching and scheduling, quantisation, parallelism, framework internals. shilp implements a deliberately small, readable slice of exactly that surface, and its README is unusually explicit about where the slice stops. Put the two together and each chapter has somewhere to land — a file to open, a measurement to reproduce, a gap to close.
+The repository is organised by chapter. Chapters 1 and 5 are conceptual and ship no code; everything else is a notebook you can open in Colab or a directory you can run. These notes are a map to that code: what each directory contains, how to run it, what to look for in the output, and what the numbers mean once you have them.
 
-These notes do three things. They summarise what each chapter covers. They say which shilp module the chapter explains, improves, or contradicts. And they mark, honestly, whether that chapter is something shilp already does, something it deliberately does not do, or something on its roadmap.
+They deliberately stay with what is in the repository — the source, the notebooks, and the benchmark results the notebooks record. Where the book's prose explains something the code does not, these notes say so rather than filling the gap.
 
 <div class="sh-cards">
-  <a class="sh-card" href="start/what-shilp-is/">
+  <a class="sh-card" href="start/repo-tour/">
     <span class="n">01</span>
-    <span class="t">What shilp is</span>
-    <span class="d">The four steps, the three engines, the two API surfaces, and what the code map looks like.</span>
+    <span class="t">Repository tour</span>
+    <span class="d">Layout, prerequisites, and the one-line command that starts each chapter.</span>
   </a>
-  <a class="sh-card" href="start/numbers-that-matter/">
+  <a class="sh-card" href="start/benchmarks/">
     <span class="n">02</span>
-    <span class="t">Numbers that matter</span>
-    <span class="d">Prefill is compute-bound, decode is bandwidth-bound — with the measurements and the capacity formulas.</span>
+    <span class="t">Benchmarks</span>
+    <span class="d">The measured results the notebooks record: quantisation, prefix repetition, tensor parallelism.</span>
   </a>
-  <a class="sh-card" href="companion/chapter-map/">
+  <a class="sh-card" href="walkthroughs/single-model-service/">
     <span class="n">03</span>
-    <span class="t">Chapter map</span>
-    <span class="d">One table: book chapter, shilp module, what it closes, and how much of it shilp already has.</span>
+    <span class="t">Single-model service</span>
+    <span class="d">Chapter 3's FastAPI service, file by file: engine, workload manager, executor, worker.</span>
+  </a>
+  <a class="sh-card" href="walkthroughs/multi-model-service/">
+    <span class="n">04</span>
+    <span class="t">Multi-model service</span>
+    <span class="d">An LRU cache of two models, a worker factory, and a Triton-backed worker.</span>
+  </a>
+  <a class="sh-card" href="walkthroughs/benchmark-method/">
+    <span class="n">05</span>
+    <span class="t">Benchmark method</span>
+    <span class="d">The seven phases of chapter 9, and the four metrics they collect.</span>
   </a>
   <a class="sh-card" href="plan/reading-plan/">
-    <span class="n">04</span>
-    <span class="t">Reading plan</span>
-    <span class="d">A four-week order for reading the book against the repo, with what to run each week.</span>
-  </a>
-  <a class="sh-card" href="gaps/serving-gaps/">
-    <span class="n">05</span>
-    <span class="t">What shilp does not do</span>
-    <span class="d">No auth, no admission control, no continuous batching, no multi-tenancy — and why each one is missing.</span>
-  </a>
-  <a class="sh-card" href="reference/sources/">
     <span class="n">06</span>
-    <span class="t">Sources</span>
-    <span class="d">The book, its companion repository, the shilp repo, and the post that started this reading.</span>
+    <span class="t">Reading plan</span>
+    <span class="d">A four-week order for reading the chapters against the code, with what to run each week.</span>
   </a>
 </div>
 
-## How to use these notes
+## The repository in one paragraph
 
-Read a chapter, then open the shilp file named in its *Where this lands* block. The chapter gives you the general mechanism; the file gives you one concrete implementation of it, small enough to read in a sitting. When the two disagree, that is the interesting part — usually it means the book is describing a clustered, batched, multi-tenant system and shilp is describing one box serving one model.
+Chapter 2 is five notebooks that take a transformer apart — config, attention, memory, a step-by-step generation walkthrough with per-token timings, vLLM versus plain Transformers, batching, and streaming. Chapter 3 is the centre of gravity: two runnable FastAPI services, one serving a single LLM with a workload manager and a separate worker process, one caching up to two models with an LRU and dispatching to framework-specific workers. Chapters 6, 7 and 8 are framework labs: a three-way quantisation comparison, speculative decoding and LMCache, and SGLang, TensorRT-LLM and llama.cpp side by side. Chapter 9 is the capstone: a seven-phase study that benchmarks Qwen3-14B on vLLM, quantises it, then scales it across GPUs, recording every result as JSON you can plot.
 
 !!! note "Scope"
-    These notes cover *Hands-On LLM Serving and Optimization* by Chi Wang and Peiheng Hu (O'Reilly), and the shilp repository at the commit these notes were written against. They are study notes, not a substitute for either. Where the book's text was not available, the notes stick to its published chapter outline and its companion code rather than guessing at content.
-
-## The one-paragraph version
-
-If you only read one page, read [Numbers that matter](start/numbers-that-matter.md). The single idea that reorganises everything else is that prefill and decode are bound by different resources — compute and memory bandwidth — so a GPU buys you a 6× improvement in time-to-first-token and a 1.2× improvement in decode speed on the same model. Every optimisation in the book, and every gap in shilp, follows from that asymmetry.
+    Every claim on this site is traceable to a file in the repository. Benchmark numbers are quoted from the notebooks' own recorded results and labelled with the setup they were run under. Where a number is missing, the page says it is missing rather than estimating.
