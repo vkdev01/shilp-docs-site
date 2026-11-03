@@ -1,1 +1,0 @@
-| 6 | GPU with vLLM | Clones the vLLM repository to get its benchmark script; needs a CUDA box |
