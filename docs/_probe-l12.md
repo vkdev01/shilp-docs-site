@@ -1,0 +1,1 @@
+| 9 | GPU with vLLM | Two GPU types are used in the recorded results: `g6e` and `p4d` EC2 instances |
