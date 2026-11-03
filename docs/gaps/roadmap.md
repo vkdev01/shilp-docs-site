@@ -10,8 +10,10 @@ The cheapest useful change in the repository. Recipes currently record *what* ha
 
 ```json
 { "step": "quantize", "quant_type": "Q4_K_M",
-  "measured": { "size_gib": [2.88, 0.88], "ttft_ms": [178, 173], "decode_tok_s": [84.5, 279.0] } }
+  "measured": { "size_gib": [2.88, 0.88], "ttft_ms": [null, null], "decode_tok_s": [null, null] } }
 ```
+
+The two numbers above are placeholders showing the shape — a before/after pair per metric. Fill them from your own `make loadtest` runs; shilp's published figures are fp16 versus Q4_K_M for Qwen2.5-1.5B and 7B, not for whatever model you are reshaping.
 
 Effort: small. Value: it makes every later comparison possible, and it is the habit the book argues for hardest.
 

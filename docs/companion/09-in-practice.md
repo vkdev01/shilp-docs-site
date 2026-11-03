@@ -47,7 +47,7 @@ shilp doctor                                    # 1. what do I have
 make pull                                       # 2. get a model
 make serve &                                    # 3. bring it up
 make loadtest ARGS="--rate 0.5 --duration 60"   # 4. baseline: p50, p99, tok/s
-shilp quantize --quant Q4_K_M                   # 5. the lever
+shilp quantize models/gemma-3-1b.gguf --out models/gemma-3-1b-q4.gguf --qtype Q4_K_M   # 5. the lever
 make loadtest ARGS="--rate 0.5 --duration 60"   # 6. same workload, again
 ```
 
