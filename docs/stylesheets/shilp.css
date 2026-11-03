@@ -173,8 +173,10 @@ body {
 }
 
 /* ---------- sidebar: wide, numbered, quiet ---------- */
-.md-sidebar--primary {
-  width: 15.5rem;
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary {
+    width: 15.5rem;
+  }
 }
 
 .md-nav__title {
@@ -371,4 +373,55 @@ body {
 .mermaid {
   margin: 1.2rem 0;
   text-align: center;
+}
+
+/* ---------- responsive guards ---------- */
+html,
+body {
+  overflow-x: hidden;
+}
+
+.md-typeset img,
+.md-typeset svg,
+.md-typeset video {
+  max-width: 100%;
+  height: auto;
+}
+
+.md-typeset pre,
+.md-typeset .highlight {
+  max-width: 100%;
+}
+
+.md-typeset table:not([class]) {
+  display: block;
+  overflow-x: auto;
+}
+
+@media screen and (max-width: 44.9375em) {
+  .md-typeset table:not([class]) {
+    font-size: 0.62rem;
+  }
+
+  .md-typeset table:not([class]) th,
+  .md-typeset table:not([class]) td {
+    white-space: nowrap;
+    padding: 0.42rem 0.45rem;
+  }
+
+  .md-typeset h1 {
+    font-size: 1.65rem;
+  }
+
+  .sh-hero {
+    padding-top: 1.4rem;
+  }
+
+  .sh-hero h1 {
+    font-size: 1.9rem;
+  }
+
+  .sh-cards {
+    grid-template-columns: 1fr;
+  }
 }
