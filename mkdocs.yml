@@ -1,0 +1,107 @@
+site_name: shilp · companion notes
+site_description: A reading companion for Hands-On LLM Serving and Optimization, mapped chapter by chapter onto the shilp serving stack.
+site_author: vaibhav kumar
+site_url: https://vkdev01.github.io/shilp-docs-site/
+repo_url: https://github.com/vkdev01/shilp
+repo_name: vkdev01/shilp
+edit_uri: edit/main/docs/
+copyright: MIT · built with MkDocs Material
+
+theme:
+  name: material
+  language: en
+  font:
+    text: Manrope
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: kiln
+      toggle:
+        icon: material/weather-sunny
+        name: Kiln — warm light
+    - scheme: quarry
+      toggle:
+        icon: material/weather-partly-cloudy
+        name: Quarry — cool light
+    - scheme: night
+      toggle:
+        icon: material/weather-night
+        name: Night — dark
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+extra_css:
+  - stylesheets/shilp.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@10.9.1/dist/mermaid.min.js
+  - javascripts/mermaid.mjs
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Overview: index.md
+  - Start here:
+      - What shilp is: start/what-shilp-is.md
+      - Numbers that matter: start/numbers-that-matter.md
+  - The book:
+      - Hands-On LLM Serving and Optimization: companion/the-book.md
+      - Chapter map: companion/chapter-map.md
+  - Chapter notes:
+      - "01 · Serving and optimization": companion/01-foundations.md
+      - "02 · LLM serving": companion/02-serving.md
+      - "03 · System design": companion/03-system-design.md
+      - "04 · Best practices": companion/04-best-practices.md
+      - "05 · Challenges": companion/05-challenges.md
+      - "06 · Essential techniques": companion/06-essential.md
+      - "07 · Advanced techniques": companion/07-advanced.md
+      - "08 · Frameworks": companion/08-frameworks.md
+      - "09 · In practice": companion/09-in-practice.md
+      - "10 · Advancements": companion/10-advancements.md
+  - Gaps and roadmap:
+      - What shilp does not do: gaps/serving-gaps.md
+      - Roadmap: gaps/roadmap.md
+  - Plan:
+      - Reading plan: plan/reading-plan.md
+      - Exercises: plan/exercises.md
+  - Reference:
+      - Glossary: reference/glossary.md
+      - Sources: reference/sources.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/vkdev01
