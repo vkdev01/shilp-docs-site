@@ -1,1 +1,0 @@
-The single-model service exposes four endpoints: `/basic_generate` (one prompt, no queue), `/generate` (many prompts, batched through the workload manager), `/generate_stream` (server-sent events, one token at a time) and `/generate_vllm` (the same batch through vLLM). The multi-model service exposes two: `/models` and `/predict`.
