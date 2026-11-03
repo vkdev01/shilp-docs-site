@@ -1,11 +1,11 @@
-site_name: shilp · companion notes
-site_description: A reading companion for Hands-On LLM Serving and Optimization, mapped chapter by chapter onto the shilp serving stack.
+site_name: LLM serving · companion notes
+site_description: A chapter-by-chapter companion to the Hands-On LLM Serving and Optimization repository — notebooks, two serving services, and the optimisation labs.
 site_author: vaibhav kumar
 site_url: https://vkdev01.github.io/shilp-docs-site/
-repo_url: https://github.com/vkdev01/shilp
-repo_name: vkdev01/shilp
+repo_url: https://github.com/orca3/llm-model-inference
+repo_name: orca3/llm-model-inference
 edit_uri: edit/main/docs/
-copyright: MIT · built with MkDocs Material
+copyright: Notes on <a href="https://github.com/orca3/llm-model-inference">orca3/llm-model-inference</a> · MIT
 
 theme:
   name: material
@@ -75,25 +75,23 @@ markdown_extensions:
 nav:
   - Overview: index.md
   - Start here:
-      - What shilp is: start/what-shilp-is.md
-      - Numbers that matter: start/numbers-that-matter.md
-  - The book:
-      - Hands-On LLM Serving and Optimization: companion/the-book.md
-      - Chapter map: companion/chapter-map.md
+      - Repository tour: start/repo-tour.md
+      - Benchmarks: start/benchmarks.md
   - Chapter notes:
-      - "01 · Serving and optimization": companion/01-foundations.md
-      - "02 · LLM serving": companion/02-serving.md
-      - "03 · System design": companion/03-system-design.md
-      - "04 · Best practices": companion/04-best-practices.md
-      - "05 · Challenges": companion/05-challenges.md
-      - "06 · Essential techniques": companion/06-essential.md
-      - "07 · Advanced techniques": companion/07-advanced.md
-      - "08 · Frameworks": companion/08-frameworks.md
-      - "09 · In practice": companion/09-in-practice.md
-      - "10 · Advancements": companion/10-advancements.md
-  - Gaps and roadmap:
-      - What shilp does not do: gaps/serving-gaps.md
-      - Roadmap: gaps/roadmap.md
+      - "01 · Serving and optimization": chapters/01-foundations.md
+      - "02 · LLM serving": chapters/02-serving.md
+      - "03 · System design": chapters/03-system-design.md
+      - "04 · Best practices": chapters/04-best-practices.md
+      - "05 · Challenges": chapters/05-challenges.md
+      - "06 · Essential techniques": chapters/06-essential.md
+      - "07 · Advanced techniques": chapters/07-advanced.md
+      - "08 · Frameworks": chapters/08-frameworks.md
+      - "09 · In practice": chapters/09-in-practice.md
+      - "10 · Advancements": chapters/10-advancements.md
+  - Code walkthroughs:
+      - Single-model service: walkthroughs/single-model-service.md
+      - Multi-model service: walkthroughs/multi-model-service.md
+      - Benchmark method: walkthroughs/benchmark-method.md
   - Plan:
       - Reading plan: plan/reading-plan.md
       - Exercises: plan/exercises.md
