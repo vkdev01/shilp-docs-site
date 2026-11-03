@@ -1,1 +1,0 @@
-Both are in `ch03/` and both are small enough to read in an afternoon.
