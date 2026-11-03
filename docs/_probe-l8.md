@@ -1,1 +1,0 @@
-| 4 | AWS account | Bedrock, SageMaker and S3 calls; the notebooks are trimmed to key steps |
