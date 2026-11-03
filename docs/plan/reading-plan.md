@@ -1,49 +1,61 @@
 # Reading plan
 
-Four weeks, roughly four to six hours each, reading the book against the repository rather than before it. The order is not the book's order: it starts with the arithmetic, because that is what makes the rest quantitative.
+Four weeks, each pairing one part of the book with one part of the repository. The order is not the book's order: it starts with chapter 3, because that is the only place a whole serving system is assembled and every later chapter either explains one of its parts or replaces it.
 
-## Week 1 — the arithmetic
+## Week 1 — the service
 
-**Read:** Chapter 5 (Challenges), then Chapter 1 (Introduction).
-**Do:** run `make up`, then `make loadtest ARGS="--rate 0.5 --duration 60"`.
+**Repository:** `ch03/single_model_llm_serving/`
+**Notes:** [single-model walkthrough](../walkthroughs/single-model-service.md)
+**Book:** chapter 3.
 
-Chapter 5 first, deliberately. Arithmetic intensity, KV sizing and GPU specs are the tools you need to read everything else critically. Chapter 1 is short and gives you the vocabulary for the paradigms; read it second, as a map rather than a foundation.
+Run it first (`python main.py`, then `curl` the four endpoints), then read the code in dependency order: `main.py` → `llm.py` → `workload_manager.py` → `model_executor.py` → `model_worker.py`.
 
-By the end of the week you should be able to predict, before measuring, that a GPU will improve TTFT far more than decode — and then confirm it against [Numbers that matter](../start/numbers-that-matter.md).
+The thing to look for is the queue. Every other design decision in the directory — separate streaming and batch queues, a fixed batch size of four, a background thread, a worker process — follows from "requests arrive faster than the model can serve them."
 
-## Week 2 — the mechanism
+If you finish the week with one question, make it this: what does `use_cache=False` in `model_worker.py` cost, and how would you see the cost in a chart?
 
-**Read:** Chapter 2 (LLM serving).
-**Do:** `ch02/` notebooks in order — transformer internals, the execution walkthrough, vLLM, batching, streaming. Then read `src/shilp/server/stream.py` beside `ch02/streaming.py`.
+## Week 2 — the model
 
-This is the densest week. The KV cache is the concept everything else hangs off, and the walkthrough notebook is the fastest way to see it move. Keep two questions open as you read: where does the KV cache live in shilp, and why is the second request faster than the first?
+**Repository:** `ch02/`
+**Book:** chapter 2.
 
-## Week 3 — the missing pieces
+Five notebooks, in this order: transformer internals, execution walkthrough, vLLM comparison, batching, streaming.
 
-**Read:** Chapter 6 (Essential techniques), then Chapter 3 (System design).
-**Do:** read `ch03/single_model_llm_serving/` and compare it with shilp's `server/` and `engine/` using the table in the [Chapter 3 note](../companion/03-system-design.md).
+`ch2_Workthrough_LLM_execution.ipynb` is the one that answers week 1's question. It times each generated token and plots the result, and the first bar dwarfs the rest. That chart is what `use_cache=False` throws away on every step.
 
-This is where the reading turns into a work plan. Chapter 6 names the mechanism shilp lacks (continuous batching) and Chapter 3 shows the structure that makes it possible (a workload manager between route and engine). Together they explain the four-stream stagger you measured in week 1.
+Read `ch02/streaming.py` afterwards and compare it with `llm/llm.py`'s `event_generator`: the same problem (blocking producer, async consumer) solved with a framework's async engine and by hand with queues and threads.
 
-If you write code this month, it is here: a queue in front of `generate.py`.
+## Week 3 — the measurements
 
-## Week 4 — the ceiling
+**Repository:** `ch09/model_optimization_in_practice.ipynb`
+**Notes:** [benchmark method](../walkthroughs/benchmark-method.md), [Benchmarks](../start/benchmarks.md)
+**Book:** chapters 5 and 9.
 
-**Read:** Chapter 8 (Frameworks), then Chapter 7 (Advanced), then Chapter 9 (In practice).
-**Do:** run `ch08/llamaCpp.ipynb` if your machine allows; read `ch09`'s notebook structure even if you have no CUDA box.
+Chapter 5 has no code, and this is the week it becomes concrete: memory sizing, TTFT versus TPOT, and why quantisation changes both. Chapter 9's seven phases are the method, and its recorded results are the worked example.
 
-Chapter 8 before Chapter 7, because knowing what a batched framework gives you makes the parallelism discussion concrete rather than aspirational. Chapter 9 last, as the method for deciding which of the earlier gaps to close first.
+If you have a GPU, run phases 1 to 6 on your own hardware with a smaller model. If you do not, read the recorded JSON and reconstruct the tables on the Benchmarks page by hand — that exercise teaches the metric definitions faster than reading them.
 
-**Skim:** Chapters 4 and 10. Chapter 4 is mostly organisational (auth, build-versus-buy, agentic traffic) and shilp has decided not to do that work. Chapter 10 is where the next feature lives — multi-LoRA serving — but read it after you have something running.
+Pay particular attention to phase 7. On `g6e`, four GPUs were *slower* than one; on `p4d`, four GPUs were 1.6× faster. Same code, same model. That is the week's lesson: the bottleneck decides, not the hardware count.
+
+## Week 4 — the frameworks and the ceiling
+
+**Repository:** `ch06/`, `ch08/`, then `ch07/`
+**Book:** chapters 6, 8, 7.
+
+Chapter 6's three-way quantisation lab first, because it is the most immediately applicable: one model, three precisions, a concurrency sweep, four charts. Then chapter 8's three notebooks, read as a comparison of setup cost rather than of speed. Then chapter 7, which is the ceiling — speculative decoding and a KV cache that outlives the process.
+
+**Skim:** chapters 1, 4 and 10. Chapter 1 is vocabulary, chapter 4 is organisational and cloud-shaped, and chapter 10 has no code in the repository at all. All three are worth reading; none of them will change what you type this month.
 
 ## If you have one evening
 
-Read Chapter 5's arithmetic, then [Numbers that matter](../start/numbers-that-matter.md), then the [chapter map](../companion/chapter-map.md). That is enough to understand what shilp is, where its ceiling is, and why.
-
-## If you are reading to change shilp
-
-Chapter 5 → 2 → 6 → 3 → 8. Stop there and write the queue. The rest can wait until the queue exists.
+Read `ch03/single_model_llm_serving/llm/workload_manager.py` and `model_worker.py`, then the [single-model walkthrough](../walkthroughs/single-model-service.md), then the [Benchmarks](../start/benchmarks.md) page. That is the whole arc: a queue, a model, and what the numbers look like when you measure it.
 
 ## Reading with the code open
 
-A habit worth keeping: for each chapter, write down one sentence of the form *"this chapter explains why `path/to/file.py` does X"*, and one of the form *"this chapter explains what `path/to/file.py` cannot do"*. If you cannot fill in the second sentence, you have read a description rather than a specification, and the chapter is worth a second pass.
+A habit worth keeping: for each chapter, write two sentences.
+
+*"This chapter explains why `path/to/file.py` does X."*
+
+*"This chapter explains what `path/to/file.py` cannot do."*
+
+If the second sentence is hard to fill in, you have read a description rather than a specification, and the chapter deserves a second pass.
