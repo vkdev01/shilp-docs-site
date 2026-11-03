@@ -1,0 +1,1 @@
+| 7 | GPU with vLLM | Speculative decoding wants a large model (Qwen3-32B) to show a win; LMCache needs a KV-transfer-capable setup |
