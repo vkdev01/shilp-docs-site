@@ -1,11 +1,9 @@
-<div class="sh-hero" markdown>
+<div class="sh-hero" markdown="1">
 <span class="sh-kicker">companion notes · repository</span>
 
 # Hands-On LLM Serving and Optimization
-{: .sh-title }
 
 Notes on the book's companion repository — [orca3/llm-model-inference](https://github.com/orca3/llm-model-inference): five chapter notebooks on how an LLM actually runs, two complete serving services in chapter 3, three framework labs, and a seven-phase optimisation study on Qwen3-14B.
-{: .sh-lede }
 </div>
 
 The repository is organised by chapter. Chapters 1 and 5 are conceptual and ship no code; everything else is a notebook you can open in Colab or a directory you can run. These notes are a map to that code: what each directory contains, how to run it, what to look for in the output, and what the numbers mean once you have them.
