@@ -1,0 +1,1 @@
+Most chapters are notebooks with a Colab badge at the top, so the cheapest way to read the code is also the way to run it.
