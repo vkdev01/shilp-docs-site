@@ -1,1 +1,0 @@
-| 8 | Depends | llama.cpp runs anywhere; TensorRT-LLM needs NVIDIA tooling; SGLang needs a GPU for meaningful numbers |
