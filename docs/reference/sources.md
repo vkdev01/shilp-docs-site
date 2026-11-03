@@ -1,5 +1,25 @@
 # Sources
 
+## The repository these notes cover
+
+<https://github.com/orca3/llm-model-inference> — companion source code, notebooks and examples for the book. Everything on this site is drawn from it: `README.md`, `CHANGELOG.md`, the code under `ch02/`–`ch09/`, and the results recorded inside the notebooks.
+
+Files referenced most often:
+
+| Path | Why it matters |
+| --- | --- |
+| `ch02/ch2_Workthrough_LLM_execution.ipynb` | Per-token timing chart — the prefill/decode asymmetry, measured |
+| `ch02/ch2_Inside_the_Mind_of_a_Transformer.ipynb` | Model config, architecture, attention visualisation, memory calculation |
+| `ch02/streaming.py` | Streaming with vLLM's async engine |
+| `ch03/single_model_llm_serving/llm/*.py` | Engine, workload manager, executor, worker, model manager |
+| `ch03/multi_model_serving/app/*.py` | Store, LRU manager, worker factory, three workers |
+| `ch03/multi_model_serving/model_dir/densenet_onnx/config.pbtxt` | Triton model configuration |
+| `ch06/quantization_3way_300.ipynb` | Three-precision quantisation comparison with a concurrency sweep |
+| `ch07/SpecDecode.ipynb` | Four speculative-decoding configurations on Qwen3-32B |
+| `ch07/LMCache.ipynb` | Cold versus warm KV cache, 30 samples each |
+| `ch08/*.ipynb` | SGLang, TensorRT-LLM, llama.cpp |
+| `ch09/model_optimization_in_practice.ipynb` | Seven-phase optimisation study on Qwen3-14B, with recorded JSON results |
+
 ## The book
 
 **Hands-On LLM Serving and Optimization: Hosting LLMs at Scale** — Chi Wang and Peiheng Hu, O'Reilly.
@@ -8,44 +28,27 @@
 - Read on O'Reilly: <https://www.oreilly.com/library/view/hands-llm-serving/9798341621480/>
 - Amazon: <https://www.amazon.com/Hands-LLM-Serving-Optimization-Hosting/dp/B0G48JRRMF>
 
-## Companion repository
-
-<https://github.com/orca3/llm-model-inference> — source code, notebooks and examples organised by chapter (`ch02/` through `ch09/`; Chapters 1 and 5 are conceptual and ship no code).
-
-Directories referenced in these notes:
-
-| Path | Contents |
-| --- | --- |
-| `ch02/` | Transformer internals, LLM execution walkthrough and KV cache, running Qwen with vLLM, batching, streaming (`streaming.py`) |
-| `ch03/single_model_llm_serving/` | A from-scratch single-model LLM serving service: executor, manager, worker, workload manager, API, tests |
-| `ch03/multi_model_serving/` | Multi-model serving with an NVIDIA Triton example (`model_dir/densenet_onnx`, `config/models.json`) |
-| `ch04/KnowledgeAgent/` | Sample RAG-plus-planning agent |
-| `ch04/bedrock/`, `jumpstart/`, `dlc/`, `dlc_customization/` | AWS deployment examples |
-| `ch06/` | Quantisation walkthrough comparing precision and throughput trade-offs |
-| `ch07/` | Speculative decoding, and LMCache for advanced KV caching |
-| `ch08/` | SGLang, TensorRT-LLM and llama.cpp notebooks |
-| `ch09/` | End-to-end optimisation plan benchmarking Qwen3-14B with vLLM |
-
-## shilp
-
-- Repository: <https://github.com/vkdev01/shilp>
-- Documentation (private, access on request): <https://github.com/vkdev01/shilp-docs>
-
-Files and claims in these notes are drawn from the shilp `README.md` at the commit these notes were written against, in particular its *Numbers that matter*, *Running it as a service*, *What this is not* and *Code map* sections, and the module docstrings under `src/shilp/`.
+These notes describe the repository's code and results; they do not summarise the book's prose. Where a chapter is conceptual and ships no code (chapters 1 and 5), the notes say so and point at the later artefacts that make its ideas measurable.
 
 ## How this reading started
 
-A LinkedIn post by **Kalyan KS** sharing the book's chapter outline, which linked to the companion repository above. That post is the origin of this companion site; the repository is the primary source for anything about the book's code.
+A LinkedIn post by Kalyan KS sharing the book's chapter outline, which linked to the companion repository above. The repository is the primary source for everything on this site.
 
-## Related reading, not covered here
+## Third-party projects the repository uses
 
-- vLLM documentation — PagedAttention and the scheduler
-- llama.cpp repository — the layer beneath shilp's default engine
-- SGLang — RadixAttention and structured generation
-- NVIDIA Triton — multi-model serving and model repositories
+- vLLM — serving and benchmarking in chapters 2, 6, 7 and 9
+- SGLang — `ch08/SGLang.ipynb`
+- TensorRT-LLM — `ch08/TensorRT_LLM.ipynb`
+- llama.cpp / llama-cpp-python — `ch08/llamaCpp.ipynb`
+- NVIDIA Triton Inference Server — the `densenet_onnx` example
+- LMCache — `ch07/LMCache.ipynb`
+- Spec-Bench — the benchmark harness in `ch07/SpecDecode.ipynb`
+- ShareGPT dataset — the benchmark traffic in chapters 6 and 9
+- Hugging Face Transformers and Hub — everywhere
+- AWS Bedrock, SageMaker JumpStart, Deep Learning Containers — `ch04/`
 
-## A note on accuracy
+## A note on the numbers
 
-These notes summarise the book's scope from its published chapter outline and its companion code. Where the book's prose was not available to check, the notes deliberately stay with the outline rather than inferring what a section says. Anything here about the book's *content* is a pointer to read the chapter, not a substitute for it.
+Every benchmark figure quoted on this site is transcribed from the recorded results inside the notebooks, and each table names the model, dataset, request rate and concurrency it was run at. They are properties of the hardware the authors used — `g6e` and `p4d` EC2 instances for chapter 9 — not universal constants. The ratios and the ordering of experiments transfer; the absolute values do not.
 
-The shilp measurements quoted throughout (84.5 versus 98.7 tok/s decode, 178 versus 27 ms TTFT, 9.15 versus 1.59 s prefill, the four-stream stagger, the 43 ms versus 823 ms prefix result) are the repository's own figures, measured on an M3 Pro with Gemma-3-1B at Q4_K_M. They are properties of that machine and that model, not universal constants — the ratios transfer, the absolute numbers do not.
+Where the repository records a method but no summary figure — chapter 6's three-way comparison produces plots rather than a table — this site says so instead of inventing one.
